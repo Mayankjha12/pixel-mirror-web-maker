@@ -70,7 +70,7 @@ export function simulateLifetime(
       rulPred: Math.min(rulPred, 400),
       rulLo: est ? Math.min(est.lo, 400) : 400,
       rulHi: est ? Math.min(est.hi, 400) : 400,
-      rulTrue,
+      rulTrue: Math.min(rulTrue, 400),
     });
   }
   return { failAt, points, criticalLead, watchLead, caught: criticalLead !== null && criticalLead >= 5, falseAlarms, anomalies };

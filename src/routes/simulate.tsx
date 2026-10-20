@@ -129,8 +129,8 @@ function SimLab() {
                   <ComposedChart data={result.lifetime.slice(0, frame)} margin={{ left: -10, right: 8 }}>
                     <CartesianGrid stroke="var(--border)" vertical={false} />
                     <XAxis dataKey="t" type="number" domain={[0, result.lifetime[result.lifetime.length - 1]?.t ?? 1]} unit="h" stroke="var(--muted-foreground)" fontSize={11} />
-                    <YAxis yAxisId="d" domain={[0, 1.3]} stroke="var(--muted-foreground)" fontSize={11} />
-                    <YAxis yAxisId="r" orientation="right" domain={[0, 400]} stroke="var(--muted-foreground)" fontSize={11} unit="h" />
+                    <YAxis yAxisId="d" domain={[0, 1.3]} ticks={[0, 0.25, 0.5, 0.75, 1, 1.25]} allowDataOverflow stroke="var(--muted-foreground)" fontSize={11} />
+                    <YAxis yAxisId="r" orientation="right" domain={[0, 400]} ticks={[0, 100, 200, 300, 400]} allowDataOverflow stroke="var(--muted-foreground)" fontSize={11} unit="h" />
                     <Tooltip {...tooltipStyle} />
                     <Legend wrapperStyle={{ fontSize: 12 }} />
                     <ReferenceLine yAxisId="r" y={50} stroke="var(--critical)" strokeDasharray="3 3" />
