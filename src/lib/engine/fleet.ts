@@ -96,7 +96,7 @@ export function generateFleet(seed: number): Fleet {
     const components = COMPONENT_SPECS.map((spec, j) => {
       const life = Math.max(250, weibull(r, 3.2, spec.meanLife));
       const profile: DegradationProfile = { life, shape: 2.5 + 2.5 * r(), sigma: 0.012 + 0.02 * r() };
-      const age0 = life * (0.15 + 0.83 * r());
+      const age0 = life * (0.1 + 0.88 * Math.pow(r(), 2.6));
       return { key: spec.key, uid: i * 10 + j, profile, age0 };
     });
     const history: HistoryEvent[] = [];
