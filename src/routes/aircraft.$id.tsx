@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, ComposedChart, Line, LineChart, ReferenceArea, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowLeft, Wrench, Package, Building2, CalendarClock } from "lucide-react";
 import { useFleet } from "@/lib/fleet-context";
 import { BASE_NAME, SENSOR_META, SPEC, type ComponentKey, type Sensors, generateFleet, sensorsFor } from "@/lib/engine/fleet";
@@ -73,14 +73,20 @@ function AircraftDetail() {
   const band = comp.series.map((p) => ({ t: p.t, obs: +p.obs.toFixed(3), smooth: p.smooth !== null ? +p.smooth.toFixed(3) : null }));
   const last = band[band.length - 1];
   const tNow = comp.age;
-  const proj = comp.rul < 1000
-    ? [
-        { t: +tNow.toFixed(0), proj: last?.smooth ?? 0, band: [last?.smooth ?? 0, last?.smooth ?? 0] as [number, number] },
-        { t: +(tNow + Math.min(comp.lo, 400)).toFixed(0), proj: null, band: [1, 1] as [number, number] },
-        { t: +(tNow + Math.min(comp.rul, 400)).toFixed(0), proj: 1, band: [Math.min(1, (last?.smooth ?? 0) + (1 - (last?.smooth ?? 0)) * (Math.min(comp.rul, 400) / Math.max(1, Math.min(comp.hi, 400)))), 1] as [number, number] },
-      ]
-    : [];
-  const chartData = [...band.map((b) => ({ ...b, proj: null as number | null, band: undefined as [number, number] | undefined })), ...proj.map((p) => ({ t: p.t, obs: null, smooth: null, proj: p.proj, band: p.band }))];
+  const sNow = last?.smooth ?? 0;
+  const chartData: { t: number; obs: number | null; smooth: number | null; proj: number | null }[] = band.map((b) => ({ ...b, proj: null }));
+  if (comp.rul < 1000 && chartData.length) {
+    chartData[chartData.length - 1].proj = sNow;
+    const steps = 8;
+    for (let k = 1; k <= steps; k++) {
+      const dt = (comp.rul * k) / steps;
+      // exponential projection consistent with the log-linear model
+      const y = Math.log(Math.max(sNow, 0) + 0.05) + (Math.log(1.05) - Math.log(Math.max(sNow, 0) + 0.05)) * (k / steps);
+      chartData.push({ t: +(tNow + dt).toFixed(1), obs: null, smooth: null, proj: +(Math.exp(y) - 0.05).toFixed(3) });
+    }
+  }
+  const bandLo = tNow + comp.lo;
+  const bandHi = tNow + Math.min(comp.hi, comp.rul * 3 + 50);
 
   return (
     <div className="space-y-6">
@@ -152,7 +158,7 @@ function AircraftDetail() {
                   <YAxis domain={[0, 1.1]} stroke="var(--muted-foreground)" fontSize={11} />
                   <Tooltip {...tooltipStyle} />
                   <ReferenceLine y={1} stroke="var(--critical)" strokeDasharray="4 4" label={{ value: "failure threshold", fill: "var(--critical)", fontSize: 10, position: "insideTopLeft" }} />
-                  <Area dataKey="band" stroke="none" fill="var(--primary)" fillOpacity={0.15} name="Confidence band" connectNulls />
+                  {comp.rul < 1000 && <ReferenceArea x1={bandLo} x2={bandHi} fill="var(--warning)" fillOpacity={0.1} ifOverflow="extendDomain" label={{ value: "95% failure window", fill: "var(--warning)", fontSize: 10, position: "insideBottom" }} />}
                   <Line dataKey="obs" stroke="var(--chart-2)" dot={{ r: 1.5 }} strokeWidth={0} name="Observed damage" isAnimationActive={false} />
                   <Line dataKey="smooth" stroke="var(--primary)" dot={false} strokeWidth={2} name="Smoothed" isAnimationActive={false} />
                   <Line dataKey="proj" stroke="var(--warning)" strokeDasharray="5 4" dot={false} strokeWidth={2} name="Projection" connectNulls />

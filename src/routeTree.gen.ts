@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AircraftIndexRouteImport } from './routes/aircraft.index'
+import { Route as AircraftIdRouteImport } from './routes/aircraft.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AircraftIndexRoute = AircraftIndexRouteImport.update({
+  id: '/aircraft/',
+  path: '/aircraft/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AircraftIdRoute = AircraftIdRouteImport.update({
+  id: '/aircraft/$id',
+  path: '/aircraft/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aircraft/$id': typeof AircraftIdRoute
+  '/aircraft/': typeof AircraftIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aircraft/$id': typeof AircraftIdRoute
+  '/aircraft': typeof AircraftIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aircraft/$id': typeof AircraftIdRoute
+  '/aircraft/': typeof AircraftIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/aircraft/$id' | '/aircraft/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/aircraft/$id' | '/aircraft'
+  id: '__root__' | '/' | '/aircraft/$id' | '/aircraft/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AircraftIdRoute: typeof AircraftIdRoute
+  AircraftIndexRoute: typeof AircraftIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aircraft/': {
+      id: '/aircraft/'
+      path: '/aircraft'
+      fullPath: '/aircraft/'
+      preLoaderRoute: typeof AircraftIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aircraft/$id': {
+      id: '/aircraft/$id'
+      path: '/aircraft/$id'
+      fullPath: '/aircraft/$id'
+      preLoaderRoute: typeof AircraftIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AircraftIdRoute: AircraftIdRoute,
+  AircraftIndexRoute: AircraftIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
