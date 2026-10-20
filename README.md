@@ -1,29 +1,34 @@
-# Welcome to your Lovable project
+# VyomDrishti AI
 
-This project was built with [Lovable](https://lovable.dev).
+AI predictive-maintenance and fleet-availability platform for an air fleet.
+Smart India Hackathon 2026 · Problem Statement **SIH26249 — Air Power: Predictive Maintenance & Fleet Availability** (Ministry of Defence).
+Team **Server Down** · Team ID **NSUT053**.
 
-## Build with Lovable
+> **Disclaimer:** all telemetry, fleet, spares and agency data is **simulated** by a seeded PRNG, inspired by NASA C-MAPSS turbofan degradation patterns. No real military data, insignia or logos are used.
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## Pages
+Dashboard · Aircraft (digital twin + live telemetry) · Planner · Logistics · Simulation Lab · Model (backtest) · Architecture.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Architecture
+Data Ingestion → Data Fusion → Fault Prediction → Digital Twin → Maintenance Planning → Feedback Loop. Everything runs client-side in `src/lib/engine`:
 
-## Development
+| Module | Role |
+|---|---|
+| `core.ts` | mulberry32 PRNG, hash-addressed noise, degradation model, RUL estimator |
+| `fleet.ts` | 24 aircraft × 6 components across 3 bases, spares, agencies, sensor mapping |
+| `scheduler.ts` | greedy constrained optimizer + time-based baseline + availability forecast |
+| `lifetime.ts` | online run of the estimator over a full component life |
+| `backtest.ts` | N=200 lifetime backtest and metrics |
+| `scenarios.ts` | the five Simulation Lab scenarios |
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## How the engine works
+- Hidden damage `d(t) = (e^(b·t/L) − 1)/(e^b − 1)`, Weibull life `L`, Gaussian noise; failure at `d = 1`.
+- Health = `100·(1 − smoothed d)`; aircraft health = `0.6·min + 0.4·weighted mean`.
+- RUL: gap-aware exponential smoothing with an outlier gate → least-squares fit of `ln(d+0.05)` over the last 20 samples → extrapolate to threshold; 95% band from slope standard error. Watch < 150h, Critical < 50h.
+- Scheduler: priority = urgency × availability impact; spares sourced base → other base → depot → reorder; earliest slot that respects hangar slots (2/base) and agency capacity. Outcomes are evaluated against the simulator's *true* failure times.
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+## How metrics are computed
+The Model page simulates 200 lifetimes (8% with abrupt faults), runs the estimator every 5 FH and computes RMSE (true RUL ≤ 250h), critical-alert lead time, precision/recall of "fails within 100h", false-alarm rate (true RUL > 200h) and downtime vs a 0.6×mean-life replacement policy. Nothing is hardcoded.
 
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Limitations
+Simulated data, single failure mode per component, not validated on real fleet data. Planned: validate on NASA C-MAPSS and real MRO logs.
