@@ -75,8 +75,8 @@ export function HealthRing({ value, status, size = 64, stroke = 6 }: { value: nu
         stroke={statusVar[status]}
         strokeWidth={stroke}
         strokeLinecap="round"
-        strokeDasharray={c}
-        strokeDashoffset={c * (1 - Math.max(0, Math.min(100, value)) / 100)}
+        strokeDasharray={+c.toFixed(2)}
+        strokeDashoffset={+(c * (1 - Math.max(0, Math.min(100, value)) / 100)).toFixed(2)}
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
         style={{ transition: "stroke-dashoffset 0.8s ease" }}
       />
