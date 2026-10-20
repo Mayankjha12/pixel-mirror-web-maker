@@ -228,7 +228,7 @@ export const SENSOR_META: { key: keyof Sensors; label: string; unit: string; lim
 /** Sensor readings derived from component damage (physics-flavoured mapping) + per-tick noise. */
 export function sensorsFor(st: AircraftState, seed: number, tick: number): Sensors {
   const d = (k: ComponentKey) => Math.min(1.2, 1 - st.comps.find((c) => c.key === k)!.health / 100);
-  const n = (ch: number) => noiseAt(seed, hashInts(st.ac.uidHash ?? 0), ch, tick);
+  const n = (ch: number) => noiseAt(seed, Number(st.ac.id.slice(3)), ch, tick);
   const de = d("engine");
   return {
     egt: 610 + 95 * de + 4 * n(1),
@@ -237,9 +237,4 @@ export function sensorsFor(st: AircraftState, seed: number, tick: number): Senso
     fuelFlow: 2900 + 380 * d("fuel") + 120 * de + 30 * n(4),
     bleedTemp: 205 + 40 * d("airframe") + 18 * de + 2.5 * n(5),
   };
-}
-declare module "./fleet" {
-  interface Aircraft {
-    uidHash?: number;
-  }
 }
