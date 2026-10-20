@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ArchitectureRouteImport } from './routes/architecture'
+import { Route as LogisticsRouteImport } from './routes/logistics'
+import { Route as ModelRouteImport } from './routes/model'
+import { Route as PlannerRouteImport } from './routes/planner'
+import { Route as SimulateRouteImport } from './routes/simulate'
+import { Route as AircraftIndexRouteImport } from './routes/aircraft.index'
+import { Route as AircraftIdRouteImport } from './routes/aircraft.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArchitectureRoute = ArchitectureRouteImport.update({
+  id: '/architecture',
+  path: '/architecture',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogisticsRoute = LogisticsRouteImport.update({
+  id: '/logistics',
+  path: '/logistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModelRoute = ModelRouteImport.update({
+  id: '/model',
+  path: '/model',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlannerRoute = PlannerRouteImport.update({
+  id: '/planner',
+  path: '/planner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimulateRoute = SimulateRouteImport.update({
+  id: '/simulate',
+  path: '/simulate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AircraftIndexRoute = AircraftIndexRouteImport.update({
+  id: '/aircraft/',
+  path: '/aircraft/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AircraftIdRoute = AircraftIdRouteImport.update({
+  id: '/aircraft/$id',
+  path: '/aircraft/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/architecture': typeof ArchitectureRoute
+  '/logistics': typeof LogisticsRoute
+  '/model': typeof ModelRoute
+  '/planner': typeof PlannerRoute
+  '/simulate': typeof SimulateRoute
+  '/aircraft/$id': typeof AircraftIdRoute
+  '/aircraft/': typeof AircraftIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/architecture': typeof ArchitectureRoute
+  '/logistics': typeof LogisticsRoute
+  '/model': typeof ModelRoute
+  '/planner': typeof PlannerRoute
+  '/simulate': typeof SimulateRoute
+  '/aircraft/$id': typeof AircraftIdRoute
+  '/aircraft': typeof AircraftIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/architecture': typeof ArchitectureRoute
+  '/logistics': typeof LogisticsRoute
+  '/model': typeof ModelRoute
+  '/planner': typeof PlannerRoute
+  '/simulate': typeof SimulateRoute
+  '/aircraft/$id': typeof AircraftIdRoute
+  '/aircraft/': typeof AircraftIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/architecture'
+    | '/logistics'
+    | '/model'
+    | '/planner'
+    | '/simulate'
+    | '/aircraft/$id'
+    | '/aircraft/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/architecture'
+    | '/logistics'
+    | '/model'
+    | '/planner'
+    | '/simulate'
+    | '/aircraft/$id'
+    | '/aircraft'
+  id:
+    | '__root__'
+    | '/'
+    | '/architecture'
+    | '/logistics'
+    | '/model'
+    | '/planner'
+    | '/simulate'
+    | '/aircraft/$id'
+    | '/aircraft/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ArchitectureRoute: typeof ArchitectureRoute
+  LogisticsRoute: typeof LogisticsRoute
+  ModelRoute: typeof ModelRoute
+  PlannerRoute: typeof PlannerRoute
+  SimulateRoute: typeof SimulateRoute
+  AircraftIdRoute: typeof AircraftIdRoute
+  AircraftIndexRoute: typeof AircraftIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/architecture': {
+      id: '/architecture'
+      path: '/architecture'
+      fullPath: '/architecture'
+      preLoaderRoute: typeof ArchitectureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logistics': {
+      id: '/logistics'
+      path: '/logistics'
+      fullPath: '/logistics'
+      preLoaderRoute: typeof LogisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/model': {
+      id: '/model'
+      path: '/model'
+      fullPath: '/model'
+      preLoaderRoute: typeof ModelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planner': {
+      id: '/planner'
+      path: '/planner'
+      fullPath: '/planner'
+      preLoaderRoute: typeof PlannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulate': {
+      id: '/simulate'
+      path: '/simulate'
+      fullPath: '/simulate'
+      preLoaderRoute: typeof SimulateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aircraft/': {
+      id: '/aircraft/'
+      path: '/aircraft'
+      fullPath: '/aircraft/'
+      preLoaderRoute: typeof AircraftIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aircraft/$id': {
+      id: '/aircraft/$id'
+      path: '/aircraft/$id'
+      fullPath: '/aircraft/$id'
+      preLoaderRoute: typeof AircraftIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ArchitectureRoute: ArchitectureRoute,
+  LogisticsRoute: LogisticsRoute,
+  ModelRoute: ModelRoute,
+  PlannerRoute: PlannerRoute,
+  SimulateRoute: SimulateRoute,
+  AircraftIdRoute: AircraftIdRoute,
+  AircraftIndexRoute: AircraftIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
