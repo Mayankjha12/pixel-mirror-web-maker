@@ -10,12 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LogisticsRouteImport } from './routes/logistics'
+import { Route as PlannerRouteImport } from './routes/planner'
 import { Route as AircraftIndexRouteImport } from './routes/aircraft.index'
 import { Route as AircraftIdRouteImport } from './routes/aircraft.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogisticsRoute = LogisticsRouteImport.update({
+  id: '/logistics',
+  path: '/logistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlannerRoute = PlannerRouteImport.update({
+  id: '/planner',
+  path: '/planner',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AircraftIndexRoute = AircraftIndexRouteImport.update({
@@ -31,30 +43,44 @@ const AircraftIdRoute = AircraftIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/logistics': typeof LogisticsRoute
+  '/planner': typeof PlannerRoute
   '/aircraft/$id': typeof AircraftIdRoute
   '/aircraft/': typeof AircraftIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/logistics': typeof LogisticsRoute
+  '/planner': typeof PlannerRoute
   '/aircraft/$id': typeof AircraftIdRoute
   '/aircraft': typeof AircraftIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/logistics': typeof LogisticsRoute
+  '/planner': typeof PlannerRoute
   '/aircraft/$id': typeof AircraftIdRoute
   '/aircraft/': typeof AircraftIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aircraft/$id' | '/aircraft/'
+  fullPaths: '/' | '/logistics' | '/planner' | '/aircraft/$id' | '/aircraft/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aircraft/$id' | '/aircraft'
-  id: '__root__' | '/' | '/aircraft/$id' | '/aircraft/'
+  to: '/' | '/logistics' | '/planner' | '/aircraft/$id' | '/aircraft'
+  id:
+    | '__root__'
+    | '/'
+    | '/logistics'
+    | '/planner'
+    | '/aircraft/$id'
+    | '/aircraft/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LogisticsRoute: typeof LogisticsRoute
+  PlannerRoute: typeof PlannerRoute
   AircraftIdRoute: typeof AircraftIdRoute
   AircraftIndexRoute: typeof AircraftIndexRoute
 }
@@ -66,6 +92,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logistics': {
+      id: '/logistics'
+      path: '/logistics'
+      fullPath: '/logistics'
+      preLoaderRoute: typeof LogisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planner': {
+      id: '/planner'
+      path: '/planner'
+      fullPath: '/planner'
+      preLoaderRoute: typeof PlannerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aircraft/': {
@@ -87,6 +127,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LogisticsRoute: LogisticsRoute,
+  PlannerRoute: PlannerRoute,
   AircraftIdRoute: AircraftIdRoute,
   AircraftIndexRoute: AircraftIndexRoute,
 }
