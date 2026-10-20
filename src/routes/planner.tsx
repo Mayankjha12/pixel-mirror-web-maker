@@ -77,7 +77,7 @@ function Planner() {
                         style={{ left: `${(t.start! / HORIZON) * 100}%`, width: `${(Math.min(t.duration, HORIZON - t.start!) / HORIZON) * 100}%` }}
                         title={`${t.tail} ${t.name} · day ${t.start}–${t.start! + t.duration}${t.conflicts.length ? " · " + t.conflicts.join("; ") : ""}`}
                       >
-                        <span className={cn("mr-1 h-1.5 w-1.5 shrink-0 rounded-full", statusBg[statusFromRul(t.rulDays * 3)])} />
+                        <span className={cn("mr-1 h-1.5 w-1.5 shrink-0 rounded-full", statusBg[statusFromRul(t.rulHours)])} />
                         <span className="truncate font-mono">{t.tail}</span>
                       </motion.div>
                     ))}
@@ -101,7 +101,7 @@ function Planner() {
                   <td className="py-2 font-mono text-muted-foreground">{i + 1}</td>
                   <td><Link to="/aircraft/$id" params={{ id: t.acId }} className="font-mono hover:text-primary">{t.tail}</Link></td>
                   <td>{t.name}</td>
-                  <td><StatusPill status={statusFromRul(t.rulDays * 3)} className="mr-1" /><span className="font-mono text-xs">{t.rulDays.toFixed(1)}d</span></td>
+                  <td><StatusPill status={statusFromRul(t.rulHours)} className="mr-1" /><span className="font-mono text-xs">{t.rulDays.toFixed(1)}d</span></td>
                   <td className="font-mono">{t.priority.toFixed(2)}</td>
                   <td className="text-xs">{t.spareSource === "base" ? "In stock" : t.spareSource === "transfer" ? `Transfer from ${t.spareFrom}` : t.spareSource === "depot" ? "From depot" : `Order (${t.spareReadyDay}d)`}</td>
                   <td className="font-mono">{optimized ? (t.start !== null ? `D${t.start}` : "—") : "—"}</td>

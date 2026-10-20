@@ -24,6 +24,7 @@ export interface ScheduledTask {
   name: string;
   part: string;
   rulDays: number;
+  rulHours: number;
   trueFailDay: number;
   duration: number;
   priority: number;
@@ -86,6 +87,7 @@ function makeTask(c: CompInput): ScheduledTask {
     name: spec.name,
     part: spec.part,
     rulDays,
+    rulHours: c.predRulHours,
     trueFailDay: c.trueRulHours / c.util,
     duration: spec.repairDays,
     priority: urgency * impact,
